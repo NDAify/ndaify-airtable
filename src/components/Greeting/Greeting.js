@@ -12,7 +12,7 @@ import Pager from '../Pager/Pager';
 import useStateRouter from '../../lib/useStateRouter';
 
 const Paragraph = styled.div`
-  color: #AAAAAA;
+  color: var(--ndaify-accents-6);
   margin: 0;
   padding: 0;
   font-size: 20px;
@@ -23,9 +23,16 @@ const Paragraph = styled.div`
 const NDAifyHeading = styled.div`
     margin: 0; 
     padding: 0; 
-    color: #FFFFFF; 
+    color: var(--ndaify-fg); 
     font-size: 32px;
     font-weight: 200;
+`;
+
+const Intro = styled.div`
+  background-color: var(--ndaify-bg-overlay);
+  padding: 1pc;
+  height: 200px;
+  width: 100%;
 `;
 
 const Greeting = () => {
@@ -72,8 +79,8 @@ const Greeting = () => {
         bottom={0}
       >
         <Box display="flex" height="100%" width="100%" flexDirection="column">
-          <Box display="flex" flexDirection="column" flex="1" textColor="#FFFFFF">
-            <Box padding="1pc" height="200px" width="100%" backgroundColor="#383B49" textColor="#FFFFFF" />
+          <Box display="flex" flexDirection="column" flex="1">
+            <Intro />
             <Box padding="2pc 2pc 4pc 2pc" margin="0">
               <NDAifyHeading style={{ paddingBottom: '1pc' }}>
                 Welcome to NDAify
@@ -86,13 +93,12 @@ const Greeting = () => {
             </Box>
           </Box>
 
-          <Box padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick" textColor="#FFFFFF">
+          <Box padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
             <Pager numPages={2} activeIndex={0} />
             <Button
               onClick={onGetStartedClick}
               variant="default"
               size="large"
-              backgroundColor="#4AC09A"
             >
               Get Started →
             </Button>

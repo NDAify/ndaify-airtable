@@ -13,7 +13,7 @@ import NdaifyService from '../../services/NDAifyService';
 const NDAifyHeading = styled.div`
     margin: 0; 
     padding: 0; 
-    color: #FFFFFF; 
+    color: var(--ndaify-fg); 
     font-size: 32px;
     font-weight: 200;
 `;
@@ -34,7 +34,7 @@ const Home = ({ user }) => {
         bottom={0}
       >
         <Box display="flex" height="100vh" flexDirection="column">
-          <Box display="flex" flexDirection="column" flex="1" textColor="#FFFFFF">
+          <Box display="flex" flexDirection="column" flex="1">
             <Box padding="2pc 2pc 4pc 2pc" margin="0">
               <NDAifyHeading style={{ paddingBottom: '8px' }}>
                 {getFullNameFromUser(user)}

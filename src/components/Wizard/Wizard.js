@@ -23,13 +23,13 @@ import NdaifyService from '../../services/NDAifyService';
 const NDAifyHeading = styled.div`
   margin: 0; 
   padding: 0; 
-  color: #FFFFFF; 
+  color: var(--ndaify-fg); 
   font-size: 32px;
   font-weight: 200;
 `;
 
 const Paragraph = styled.div`
-  color: #AAAAAA;
+  color: var(--ndaify-accents-6);
   margin: 0;
   padding: 0;
   font-size: 20px;
@@ -40,7 +40,7 @@ const Paragraph = styled.div`
 const WizardStepNum = styled.div`
     margin: 0; 
     padding: 0 24px 0 8px;
-    color: #FFFFFF; 
+    color: var(--ndaify-fg); 
     font-size: 36px;
     font-weight: 400; 
     line-height: 28px;
@@ -49,7 +49,7 @@ const WizardStepNum = styled.div`
 const StepTitle = styled.div`
     margin: 0;
     padding: 0;
-    color: #FFFFFF;
+    color: var(--ndaify-fg); 
     font-size: 20px; 
     font-weight: 400; 
     line-height: 28px;
@@ -59,18 +59,18 @@ const StepTitle = styled.div`
 const StepDesc = styled.div`
     margin: 0;
     padding: 0;
-    color: #FFFFFF;
+    color: var(--ndaify-fg); 
     font-size: 16px; 
     font-weight: 200; 
     line-height: 28px;
 
     a {
         text-decoration: underline;
-        color: #FFFFFF;
+        color: var(--ndaify-fg); 
       }
     
       a:visited {
-        color: #FFFFFF;
+        color: var(--ndaify-fg); 
       }
 `;
 
@@ -156,7 +156,7 @@ const Wizard = () => {
             <Form style={{ height: '100%', marginBottom: '1pc' }}>
 
               <Box display="flex" height="100%" width="100%" flexDirection="column">
-                <Box display="flex" flexDirection="column" flex="1" textColor="#FFFFFF">
+                <Box display="flex" flexDirection="column" flex="1">
                   <Box padding="2pc 2pc 4pc 2pc" margin="0">
                     <NDAifyHeading style={{ paddingBottom: '8px' }}>
                       Set up your NDAify account
@@ -229,13 +229,12 @@ const Wizard = () => {
                   </Box>
                 </Box>
 
-                <Box padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick" textColor="#FFFFFF">
+                <Box padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
                   <Pager numPages={2} activeIndex={1} />
                   <Button
                     type="submit"
                     variant="default"
                     size="large"
-                    backgroundColor="#4AC09A"
                     disabled={!isEnabled || isSubmitting}
                   >
                     Save

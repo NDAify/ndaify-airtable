@@ -14,7 +14,7 @@ const Circle = styled.div`
   height: 8px;
   border-radius: 50%;
   
-  ${(props) => (props.active ? 'background-color: #fafafa;' : 'background-color: #888888;')}
+  ${(props) => (props.active ? 'background-color: var(--ndaify-accents-8);' : 'background-color: var(--ndaify-accents-5);')}
 `;
 
 const Pager = ({ numPages, activeIndex }) => (

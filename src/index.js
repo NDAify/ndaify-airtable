@@ -17,6 +17,48 @@ import Greeting from './components/Greeting/Greeting';
 import Wizard from './components/Wizard/Wizard';
 import SessionError from './components/SessionError/SessionError';
 
+const lightVars = `
+  --ndaify-bg: 220,244,227;
+  --ndaify-fg: #424657;
+
+  --ndaify-accents-0: #ffffff;
+  --ndaify-accents-1: #fafafa;
+  --ndaify-accents-2: #eaeaea;
+  --ndaify-accents-3: #999999;
+  --ndaify-accents-4: #888888;
+  --ndaify-accents-5: #666666;
+  --ndaify-accents-6: #444444;
+  --ndaify-accents-7: #333333;
+  --ndaify-accents-8: #111111;
+  --ndaify-accents-9: #1A73E8;
+
+  --ndaify-accents-primary: #CEB778;
+  --ndaify-accents-secondary: #0F96CC;
+  --ndaify-accents-success: #4AC09A;
+  --ndaify-accents-info: #9E82E0;
+  --ndaify-accents-warning: #DFA907;
+  --ndaify-accents-danger: #DC564A;
+
+  --ndaify-accents-radius-1: 4px;
+  --ndaify-accents-radius-2: 8px;
+  --ndaify-accents-radius-3: 12px;
+  --ndaify-input-radius: 4px;
+  --ndaify-button-radius: 4px;
+
+  --ndaify-input-bg: #FFFFFF;
+  --ndaify-input-fg: #424657;
+  --ndaify-input-placeholder-color: #AAAAAA;
+  --ndaify-input-disabled-bg: #AAAAAA;
+
+  --ndaify-button-fg: #FFFFFF;
+  
+  --ndaify-bg-overlay: #D2E7D8;
+  --ndaify-user-action-bg: #BDD8D3;
+  --ndaify-link-color: var(--ndaify-fg);
+  --ndaify-signature-line: var(--ndaify-accents-8);
+  --ndaify-portal-opacity: 0.8;
+`;
+
 const darkVars = `
   --ndaify-bg: 66,70,87;
   --ndaify-fg: #FFFFFF;
@@ -61,16 +103,38 @@ const darkVars = `
 
 loadCSSFromURLAsync('https://fonts.googleapis.com/css2?family=Raleway:wght@200;400;700&display=swap');
 loadCSSFromString(`
+  :root {
+    ${lightVars}
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      ${lightVars}
+    }
+
+    // dark override
+    .dark {
+      ${darkVars}
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
     :root {
       ${darkVars}
     }
-
-    body { 
-      background-color: rgb(var(--ndaify-bg));
-      font-family: 'Raleway', sans-serif;
-      font-weight: 200;
-      height: 100%;
+    
+    // light override
+    .light {
+      ${lightVars}
     }
+  }
+
+  body { 
+    background-color: rgb(var(--ndaify-bg));
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    height: 100%;
+  }
 `);
 
 viewport.addMaxFullscreenSize({
@@ -87,7 +151,6 @@ const Loading = () => (
     alignItems="center"
   >
     <Loader scale={0.5} />
-    ;
   </Box>
 );
 
@@ -98,8 +161,9 @@ const Error = () => (
     display="flex"
     justifyContent="center"
     alignItems="center"
-    backgroundColor="red"
-    textColor="#FFFFFF"
+    backgroundColor="var(--ndaify-accents-danger)"
+    textColor="var(--ndaify-fg)"
+    fontSize="16px"
   >
     Something bad happened, please reload the block.
   </Box>
