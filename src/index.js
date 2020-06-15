@@ -112,7 +112,7 @@ loadCSSFromString(`
       ${lightVars}
     }
 
-    // dark override
+    /* dark override */
     .dark {
       ${darkVars}
     }
@@ -123,7 +123,7 @@ loadCSSFromString(`
       ${darkVars}
     }
     
-    // light override
+    /* light override */
     .light {
       ${lightVars}
     }
