@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env", { 
+        "targets": {
+          "browsers": ["firefox >= 29", "chrome >= 32", "safari >= 9", "edge >= 13"]
+        }  
+      } 
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "@babel/plugin-transform-flow-strip-types",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-nullish-coalescing-operator",
+    "@babel/plugin-proposal-optional-chaining"
+  ]
+}
+

@@ -45,7 +45,7 @@ class RequestError extends NdaifyServiceError {
   }
 }
 
-const NDAIFY_ENDPOINT_URL = "http://localhost:8080";
+const NDAIFY_ENDPOINT_URL = 'http://localhost:8080';
 
 const NO_SESSION = Symbol('No Session');
 
@@ -56,7 +56,7 @@ const DISPATCH_METHOD = {
   DELETE: 'DELETE',
 };
 
-const redirect = (to, params = {}) => {
+const redirect = (to) => {
   replace(to);
 };
 
@@ -102,9 +102,7 @@ const dispatch = (
 ) => (ctx, sessionToken) => async (payload) => {
   if (!sessionToken) {
     if (!config.noRedirect) {
-      redirect('sessionError', {
-        errorMessage: 'You must log in to continue',
-      });
+      redirect('sessionError');
     }
 
     throw new InvalidSessionError('Missing sessionToken', statuses('Unauthorized'));
@@ -149,6 +147,7 @@ const dispatch = (
       );
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
 
     throw new FetchError('Service Unavailable', statuses('Service Unavailable'));
@@ -167,9 +166,7 @@ const dispatch = (
   ) {
     if (response.status === statuses('Unauthorized')) {
       if (!config.noRedirect) {
-        redirect('sessionError', {
-          errorMessage: 'Your session has expired. Log in to continue.',
-        });
+        redirect('sessionError');
       }
 
       throw new InvalidSessionError(data?.errorMessage, response.status, data);

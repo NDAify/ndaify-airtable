@@ -1,12 +1,11 @@
 import React from 'react';
 import {
-    initializeBlock,
-    Box,
-    Loader,
-    loadCSSFromString,
-    loadCSSFromURLAsync,
-    useGlobalConfig,
-    Button
+  initializeBlock,
+  Box,
+  Loader,
+  loadCSSFromString,
+  loadCSSFromURLAsync,
+  useGlobalConfig,
 } from '@airtable/blocks/ui';
 
 import { viewport } from '@airtable/blocks';
@@ -17,7 +16,6 @@ import useStateRouter, { ROUTER_LOADING, ROUTER_ERROR, StateRouterProvider } fro
 import Greeting from './components/Greeting/Greeting';
 import Wizard from './components/Wizard/Wizard';
 import SessionError from './components/SessionError/SessionError';
-
 
 const darkVars = `
   --ndaify-bg: 66,70,87;
@@ -76,28 +74,29 @@ loadCSSFromString(`
 `);
 
 viewport.addMaxFullscreenSize({
-    height: 600,
-    width: 540,
+  height: 600,
+  width: 540,
 });
 
 const Loading = () => (
-  <Box 
-    height="100vh"   
-    width="100vw"           
-    display="flex" 
-    justifyContent="center" 
+  <Box
+    height="100vh"
+    width="100vw"
+    display="flex"
+    justifyContent="center"
     alignItems="center"
   >
-    <Loader scale={0.5} />;
+    <Loader scale={0.5} />
+    ;
   </Box>
 );
 
 const Error = () => (
-  <Box 
-    height="100vh"   
-    width="100vw"           
-    display="flex" 
-    justifyContent="center" 
+  <Box
+    height="100vh"
+    width="100vw"
+    display="flex"
+    justifyContent="center"
     alignItems="center"
     backgroundColor="red"
     textColor="#FFFFFF"
@@ -107,27 +106,28 @@ const Error = () => (
 );
 
 const ROUTES = {
-  home: Home, 
+  home: Home,
   greeting: Greeting,
-  wizard: Wizard, 
-  sessionError: SessionError, 
-  [ROUTER_ERROR]: Error, 
-  [ROUTER_LOADING]: Loading, 
+  wizard: Wizard,
+  sessionError: SessionError,
+  [ROUTER_ERROR]: Error,
+  [ROUTER_LOADING]: Loading,
 };
 
 const NDAifyApp = () => {
-    const [blockState] = useStateRouter();
+  const [blockState] = useStateRouter();
 
-    const Komponent = ROUTES[blockState.route];
+  const Komponent = ROUTES[blockState.route];
 
-    if (Komponent) {
-        return (
-            <Komponent {...blockState.initialProps} />
-        );
-    }
+  if (Komponent) {
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      <Komponent {...blockState.initialProps} />
+    );
+  }
 
-    return null;
-}
+  return null;
+};
 
 const NDAifyBlock = () => {
   const globalConfig = useGlobalConfig();
@@ -135,8 +135,8 @@ const NDAifyBlock = () => {
   const ndaifyApiKey = globalConfig.get('NDAIFY_API_KEY');
 
   return (
-    <StateRouterProvider 
-      routes={ROUTES} 
+    <StateRouterProvider
+      routes={ROUTES}
       initialRoute={(ndaifyApiKey ? 'home' : 'greeting')}
     >
       <NDAifyApp />

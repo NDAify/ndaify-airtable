@@ -17,16 +17,15 @@ const Circle = styled.div`
   ${(props) => (props.active ? 'background-color: #fafafa;' : 'background-color: #888888;')}
 `;
 
-const Pager = ({ numPages, activeIndex }) => {
-    return (
-        <PagerContainer>
-            {
-                new Array(numPages).fill().map((value, ii) => (
-                  <Circle key={ii} active={activeIndex === ii} />
-                ))
-            }
-        </PagerContainer>
-    )
-}
+const Pager = ({ numPages, activeIndex }) => (
+  <PagerContainer>
+    {
+      new Array(numPages).fill().map((value, ii) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <Circle key={ii} active={activeIndex === ii} />
+      ))
+    }
+  </PagerContainer>
+);
 
 export default Pager;

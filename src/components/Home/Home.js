@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import {
-    Box,
-    useViewport,
+  Box,
+  useViewport,
 } from '@airtable/blocks/ui';
 
 import SettingsButton from '../SettingsButton/SettingButton';
@@ -22,42 +22,42 @@ const getFullNameFromUser = (user) => `${user.metadata.linkedInProfile.firstName
 
 const Home = ({ user }) => {
   const viewport = useViewport();
-    
+
   return (
-      <>
-        <SettingsButton show />
-        <Box
-            position={viewport.isFullscreen ? 'absolute': 'unset'}
-            top={0}
-            left={0}
-            right={0}
-            bottom={0}
-        >
-            <Box display="flex" height="100vh" flexDirection="column">
-                <Box display="flex" flexDirection="column" flex="1" textColor="#FFFFFF">
-                    <Box padding="2pc 2pc 4pc 2pc" margin="0">
-                        <NDAifyHeading style={{ paddingBottom: '8px', }}>
-                            {getFullNameFromUser(user)}
-                        </NDAifyHeading>
-                        <NDAifyHeading style={{ paddingBottom: '8px', }}>
-                            Send an NDA in a couple minutes. 
-                        </NDAifyHeading>
-                    </Box>
-                </Box>
+    <>
+      <SettingsButton show />
+      <Box
+        position={viewport.isFullscreen ? 'absolute' : 'unset'}
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+      >
+        <Box display="flex" height="100vh" flexDirection="column">
+          <Box display="flex" flexDirection="column" flex="1" textColor="#FFFFFF">
+            <Box padding="2pc 2pc 4pc 2pc" margin="0">
+              <NDAifyHeading style={{ paddingBottom: '8px' }}>
+                {getFullNameFromUser(user)}
+              </NDAifyHeading>
+              <NDAifyHeading style={{ paddingBottom: '8px' }}>
+                Send an NDA in a couple minutes.
+              </NDAifyHeading>
             </Box>
+          </Box>
         </Box>
-      </>
+      </Box>
+    </>
   );
-}
+};
 
 Home.getInitialProps = async () => {
-    const ndaifyService = new NdaifyService();
+  const ndaifyService = new NdaifyService();
 
-    const { user } = await ndaifyService.getSession();
+  const { user } = await ndaifyService.getSession();
 
-    return {
-        user
-    };
-}
+  return {
+    user,
+  };
+};
 
 export default Home;

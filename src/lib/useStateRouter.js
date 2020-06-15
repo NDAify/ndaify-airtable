@@ -18,7 +18,7 @@ const routerEvents = new EventEmitter();
 
 export const replace = (route) => {
   routerEvents.emit('replace', route);
-}
+};
 
 let counter = 0;
 
@@ -29,11 +29,11 @@ export const StateRouterProvider = ({ children, routes, initialRoute }) => {
 
   const setBlockStateWithProps = useCallback(async (nextBlockState) => {
     let initialProps = {};
-    
-    counter = counter + 1;
-    let ticket = counter;
 
-    const route = nextBlockState.route;
+    counter += 1;
+    const ticket = counter;
+
+    const { route } = nextBlockState;
 
     if (routes[route] && routes[route].getInitialProps) {
       setBlockState({
@@ -53,17 +53,18 @@ export const StateRouterProvider = ({ children, routes, initialRoute }) => {
       } catch (error) {
         // bail
         if (counter === ticket) {
-            setBlockState({
+          setBlockState({
             route: ROUTER_ERROR,
           });
         }
 
+        // eslint-disable-next-line no-console
         console.log(error);
       }
-    
+
       return;
-    } 
-    
+    }
+
     setBlockState(nextBlockState);
   }, [routes, setBlockState]);
 
@@ -74,7 +75,7 @@ export const StateRouterProvider = ({ children, routes, initialRoute }) => {
           route,
         });
       }
-    }
+    };
 
     // listen first
     routerEvents.on('replace', handleRedirect);
@@ -83,7 +84,7 @@ export const StateRouterProvider = ({ children, routes, initialRoute }) => {
     if (blockState.route === INIT) {
       setBlockStateWithProps({
         route: initialRoute,
-      })
+      });
     }
 
     return () => {
