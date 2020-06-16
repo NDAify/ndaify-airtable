@@ -26,6 +26,7 @@
     "eslint-plugin-react-hooks": "^3.0.0"
   },
   "scripts": {
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "dev": "block run"
   }
 }
