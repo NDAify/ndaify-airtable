@@ -144,7 +144,7 @@ const Wizard = () => {
   return (
     <>
       <SettingsButton show={false} />
-      <Box minHeight="100vh">
+      <Box Box height="calc(100vh - 80px)" overflow="scroll" display="flex" flexDirection="column" marginBottom="80px">
         <Formik
           initialValues={initialValues}
           validateOnChange={false}
@@ -229,7 +229,7 @@ const Wizard = () => {
                   </Box>
                 </Box>
 
-                <Box padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
+                <Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
                   <Pager numPages={2} activeIndex={1} />
                   <Button
                     type="submit"
