@@ -1,4 +1,10 @@
 {
+  "name": "ndaify-airtable",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=14.2.0"
+  },
   "dependencies": {
     "@airtable/blocks": "0.0.52",
     "eventemitter3": "^4.0.4",
