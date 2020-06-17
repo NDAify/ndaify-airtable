@@ -9,6 +9,7 @@ import {
 
 import SettingsButton from '../SettingsButton/SettingButton';
 import Pager from '../Pager/Pager';
+import Bradning from '../Branding/Branding';
 import useStateRouter from '../../lib/useStateRouter';
 
 const Paragraph = styled.div`
@@ -21,19 +22,11 @@ const Paragraph = styled.div`
 `;
 
 const NDAifyHeading = styled.div`
-    margin: 0; 
-    padding: 0; 
-    color: var(--ndaify-fg); 
-    font-size: 32px;
-    font-weight: 200;
-`;
-
-const Intro = styled.div`
-  background-color: var(--ndaify-bg-overlay);
-  padding: 1pc;
-  height: 200px;
-  width: 100%;
-  flex: none;
+  margin: 0; 
+  padding: 0; 
+  color: var(--ndaify-fg); 
+  font-size: 32px;
+  font-weight: 200;
 `;
 
 const Greeting = () => {
@@ -75,7 +68,7 @@ const Greeting = () => {
       <Box>
         <Box>
           <Box height="calc(100vh - 80px)" overflow="scroll" display="flex" flexDirection="column" marginBottom="80px">
-            <Intro />
+            <Bradning />
             <Box padding="2pc 2pc 4pc 2pc" margin="0">
               <NDAifyHeading style={{ paddingBottom: '1pc' }}>
                 Welcome to NDAify
