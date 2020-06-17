@@ -11,7 +11,7 @@ import {
   Text,
 } from '@airtable/blocks/ui';
 
-import { useSettings, ConfigKeys, allowedUrlFieldTypes } from './settings';
+import { useSettings, ConfigKeys, allowedUrlFieldTypes } from './settings.example';
 
 function SettingsForm({ setIsSettingsOpen }) {
   const globalConfig = useGlobalConfig();

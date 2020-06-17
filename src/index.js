@@ -10,7 +10,6 @@ import {
 
 import { viewport } from '@airtable/blocks';
 
-
 import useStateRouter, { ROUTER_LOADING, ROUTER_ERROR, StateRouterProvider } from './lib/useStateRouter';
 
 // screens

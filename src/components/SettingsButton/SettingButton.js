@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useWatchable, useSettingsButton } from '@airtable/blocks/ui';
+import { useWatchable } from '@airtable/blocks/ui';
 import { settingsButton } from '@airtable/blocks';
 
 import useStateRouter from '../../lib/useStateRouter';

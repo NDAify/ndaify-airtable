@@ -6,10 +6,6 @@ import {
   useViewport,
   useBase,
   useWatchable,
-
-  Dialog,
-  Heading,
-  Text,
 } from '@airtable/blocks/ui';
 import { cursor } from '@airtable/blocks';
 
@@ -62,7 +58,10 @@ const Home = () => {
           <Box display="flex" flexDirection="column" flex="1">
             <Box padding="2pc 2pc 4pc 2pc" margin="0">
               <NDAifyHeading style={{ paddingBottom: '8px' }}>
-                {activeTable.name} : {activeView.name}
+                {activeTable.name}
+                {' '}
+                :
+                {activeView.name}
               </NDAifyHeading>
             </Box>
           </Box>

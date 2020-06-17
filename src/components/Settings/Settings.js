@@ -45,51 +45,16 @@ const Paragraph = styled.div`
   }
 `;
 
-const WizardStepNum = styled.div`
-  margin: 0; 
-  padding: 0 24px 0 8px;
-  color: var(--ndaify-fg); 
-  font-size: 36px;
-  font-weight: 400; 
-  line-height: 28px;
-`;
-
-const StepTitle = styled.div`
-  margin: 0;
-  padding: 0;
-  color: var(--ndaify-fg); 
-  font-size: 20px; 
-  font-weight: 400; 
-  line-height: 28px;
-  padding-bottom: 4px;
-`;
-
-const StepDesc = styled.div`
-  margin: 0;
-  padding: 0;
-  color: var(--ndaify-fg); 
-  font-size: 16px; 
-  font-weight: 200; 
-  line-height: 28px;
-
-  a {
-    text-decoration: underline;
-    color: var(--ndaify-fg); 
-  }
-
-  a:visited {
-    color: var(--ndaify-fg); 
-  }
-`;
-
 const InputContainer = styled.div`
   margin-top: 2pc;
   margin-bottom: 2pc;
 `;
 
-const getFullNameFromUser = (user) => `${user.metadata.linkedInProfile.firstName} ${user.metadata.linkedInProfile.lastName}`;
+// const getFullNameFromUser = (user) =>
+// `${user.metadata.linkedInProfile.firstName}
+// ${user.metadata.linkedInProfile.lastName}`;
 
-const Settings = ({ user, activeNDAifyApiKey }) => {
+const Settings = ({ /* user, */activeNDAifyApiKey }) => {
   const [, setBlockState] = useStateRouter();
 
   const viewport = useViewport();

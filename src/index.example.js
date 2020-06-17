@@ -1,7 +1,8 @@
+/* eslint-disable */
 import React, {
-  Fragment, useState, useCallback, useEffect,
+  useState, useCallback, useEffect,
 } from 'react';
-import { cursor, settingsButton, viewport } from '@airtable/blocks';
+import { cursor } from '@airtable/blocks';
 import { ViewType } from '@airtable/blocks/models';
 import {
   initializeBlock,
@@ -13,21 +14,14 @@ import {
   useWatchable,
   Box,
   Dialog,
-  Button,
   Heading,
-  Loader,
   Link,
   Text,
   TextButton,
-  ViewportConstraint,
-  loadCSSFromString,
-  useGlobalConfig,
-  loadCSSFromURLAsync,
-  useViewport,
 } from '@airtable/blocks/ui';
 
-import { useSettings } from './settings';
-import SettingsForm from './SettingsForm';
+import { useSettings } from './settings.example';
+import SettingsForm from './SettingsForm.example';
 
 // How this block chooses a preview to show:
 //
@@ -163,7 +157,7 @@ function UrlPreviewBlock() {
 
   return (
     <Box>
-      
+
       {isSettingsOpen ? (
         <SettingsForm setIsSettingsOpen={setIsSettingsOpen} />
       ) : (
@@ -225,8 +219,6 @@ function RecordPreviewWithDialog({
           setIsSettingsOpen={setIsSettingsOpen}
         />
       </Box>
-
-
 
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)} maxWidth={400}>
@@ -303,7 +295,9 @@ function RecordPreview({
     return (
       <>
         <Text paddingX={3}>
-          Switch to the “{table.name}” table to see previews.
+          Switch to the “
+          {table.name}
+          ” table to see previews.
         </Text>
         <TextButton size="small" marginTop={3} onClick={() => setIsSettingsOpen(true)}>
           Settings
@@ -340,7 +334,8 @@ function RecordPreview({
     return (
       <>
         <Text>
-          The “{previewField.name}
+          The “
+          {previewField.name}
           ” field is empty
         </Text>
         {viewSupportedURLsButton}
