@@ -45,7 +45,7 @@ class RequestError extends NdaifyServiceError {
   }
 }
 
-const NDAIFY_ENDPOINT_URL = 'http://localhost:8080';
+const NDAIFY_ENDPOINT_URL = 'https://api.ndaify.com';
 
 const NO_SESSION = Symbol('No Session');
 

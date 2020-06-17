@@ -12,7 +12,6 @@ import {
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import FieldErrorMessage from '../ErrorMessage/FieldErrorMessage';
 import SettingsButton from '../SettingsButton/SettingButton';
-import Pager from '../Pager/Pager';
 import Input from '../Input/Input';
 
 import useStateRouter from '../../lib/useStateRouter';
@@ -24,7 +23,7 @@ const NDAifyHeading = styled.div`
   margin: 0; 
   padding: 0; 
   color: var(--ndaify-fg); 
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 200;
 `;
 
@@ -32,46 +31,55 @@ const Paragraph = styled.div`
   color: var(--ndaify-accents-6);
   margin: 0;
   padding: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 28px;
+  line-height: 20px;
+
+  a {
+    text-decoration: underline;
+    color: var(--ndaify-fg); 
+  }
+
+  a:visited {
+    color: var(--ndaify-fg); 
+  }
 `;
 
 const WizardStepNum = styled.div`
-    margin: 0; 
-    padding: 0 24px 0 8px;
-    color: var(--ndaify-fg); 
-    font-size: 36px;
-    font-weight: 400; 
-    line-height: 28px;
+  margin: 0; 
+  padding: 0 24px 0 8px;
+  color: var(--ndaify-fg); 
+  font-size: 36px;
+  font-weight: 400; 
+  line-height: 28px;
 `;
 
 const StepTitle = styled.div`
-    margin: 0;
-    padding: 0;
-    color: var(--ndaify-fg); 
-    font-size: 20px; 
-    font-weight: 400; 
-    line-height: 28px;
-    padding-bottom: 4px;
+  margin: 0;
+  padding: 0;
+  color: var(--ndaify-fg); 
+  font-size: 20px; 
+  font-weight: 400; 
+  line-height: 28px;
+  padding-bottom: 4px;
 `;
 
 const StepDesc = styled.div`
-    margin: 0;
-    padding: 0;
-    color: var(--ndaify-fg); 
-    font-size: 16px; 
-    font-weight: 200; 
-    line-height: 28px;
+  margin: 0;
+  padding: 0;
+  color: var(--ndaify-fg); 
+  font-size: 16px; 
+  font-weight: 200; 
+  line-height: 28px;
 
-    a {
-        text-decoration: underline;
-        color: var(--ndaify-fg); 
-      }
-    
-      a:visited {
-        color: var(--ndaify-fg); 
-      }
+  a {
+    text-decoration: underline;
+    color: var(--ndaify-fg); 
+  }
+
+  a:visited {
+    color: var(--ndaify-fg); 
+  }
 `;
 
 const InputContainer = styled.div`
@@ -79,7 +87,9 @@ const InputContainer = styled.div`
   margin-bottom: 2pc;
 `;
 
-const Wizard = () => {
+const getFullNameFromUser = (user) => `${user.metadata.linkedInProfile.firstName} ${user.metadata.linkedInProfile.lastName}`;
+
+const Settings = ({ user, activeNDAifyApiKey }) => {
   const [, setBlockState] = useStateRouter();
 
   const viewport = useViewport();
@@ -128,7 +138,8 @@ const Wizard = () => {
         route: 'home',
       });
     } catch (error) {
-      await globalConfig.setAsync('NDAIFY_API_KEY', null);
+      // reuse the old key if the new key fails
+      await globalConfig.setAsync('NDAIFY_API_KEY', activeNDAifyApiKey);
 
       // eslint-disable-next-line no-console
       console.error(error);
@@ -137,8 +148,16 @@ const Wizard = () => {
   };
   const onSubmit = useCallback(handleSubmit, [globalConfig, setBlockState, viewport]);
 
+  const handleCancelClick = async () => {
+    viewport.exitFullscreen();
+    setBlockState({
+      route: 'home',
+    });
+  };
+  const onCancelClick = useCallback(handleCancelClick, []);
+
   const initialValues = {
-    apiKey: '',
+    apiKey: activeNDAifyApiKey,
   };
 
   return (
@@ -159,48 +178,19 @@ const Wizard = () => {
                 <Box display="flex" flexDirection="column" flex="1">
                   <Box padding="2pc 2pc 4pc 2pc" margin="0">
                     <NDAifyHeading style={{ paddingBottom: '8px' }}>
-                      Set up your NDAify account
+                      Settings
                     </NDAifyHeading>
                     <Paragraph style={{ paddingBottom: '2pc' }}>
-                      To use this block, you need to sign up for NDAify.
+                      This block uses the
+                      {' '}
+                      <a href="https://ndaify.com/dev/docs" target="_blank" rel="noopener noreferrer">
+                        NDAify API
+                      </a>
+                      .
                     </Paragraph>
 
-                    <Box display="flex" flexDirection="row" paddingBottom="2pc">
-                      <Box display="flex" flexDirection="row">
-                        <WizardStepNum>
-                          1
-                        </WizardStepNum>
-                      </Box>
-                      <Box display="flex" flexDirection="column">
-                        <StepTitle>
-                          Sign up or log in to NDAify
-                        </StepTitle>
-                        <StepDesc style={{ paddingBottom: '4px' }}>
-                          <a href="https://ndaify.com/login" target="_blank" rel="noopener noreferrer">Sign up</a>
-                          {' '}
-                          for a NDAify account or log in to your existing account.
-                        </StepDesc>
-                      </Box>
-                    </Box>
-
                     <Box display="flex" flexDirection="row">
-                      <Box display="flex" flexDirection="row">
-                        <WizardStepNum>
-                          2
-                        </WizardStepNum>
-                      </Box>
                       <Box display="flex" flexDirection="column" width="100%">
-                        <StepTitle>
-                          Save your NDAify API credentials
-                        </StepTitle>
-                        <StepDesc>
-                          Go to the
-                          {' '}
-                          <a href="https://ndaify.com/dev/keys" target="_blank" rel="noopener noreferrer">API Keys</a>
-                          {' '}
-                          and click &quot;Create API Key&quot;.
-                        </StepDesc>
-
                         {
                           status ? (
                             <ErrorMessage style={{ marginTop: '2pc', marginBottom: '0pc' }}>
@@ -229,8 +219,17 @@ const Wizard = () => {
                   </Box>
                 </Box>
 
-                <Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
-                  <Pager numPages={2} activeIndex={1} />
+                <Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="space-between" alignItems="center" height="80px" borderTop="thick">
+                  <Button
+                    type="button"
+                    variant="default"
+                    size="large"
+                    disabled={isSubmitting}
+                    onClick={onCancelClick}
+                  >
+                    Cancel
+                  </Button>
+
                   <Button
                     type="submit"
                     variant="default"
@@ -251,4 +250,4 @@ const Wizard = () => {
   );
 };
 
-export default Wizard;
+export default Settings;

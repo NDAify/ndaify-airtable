@@ -10,12 +10,15 @@ import {
 
 import { viewport } from '@airtable/blocks';
 
-import Home from './components/Home/Home';
 
 import useStateRouter, { ROUTER_LOADING, ROUTER_ERROR, StateRouterProvider } from './lib/useStateRouter';
-import Greeting from './components/Greeting/Greeting';
-import Wizard from './components/Wizard/Wizard';
-import SessionError from './components/SessionError/SessionError';
+
+// screens
+import Home from './screens/home';
+import Settings from './screens/settings';
+import Greeting from './screens/greeting';
+import Wizard from './screens/wizard';
+import SessionError from './screens/sessionError';
 
 const lightVars = `
   --ndaify-bg: 220,244,227;
@@ -150,7 +153,7 @@ const Loading = () => (
     justifyContent="center"
     alignItems="center"
   >
-    <Loader scale={0.5} />
+    <Loader scale={0.3} />
   </Box>
 );
 
@@ -171,6 +174,7 @@ const Error = () => (
 
 const ROUTES = {
   home: Home,
+  settings: Settings,
   greeting: Greeting,
   wizard: Wizard,
   sessionError: SessionError,
