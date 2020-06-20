@@ -87,6 +87,7 @@ const Greeting = () => {
               onClick={onGetStartedClick}
               variant="default"
               size="large"
+              style={{ backgroundColor: 'var(--ndaify-accents-success)', color: 'var(--ndaify-button-fg)' }}
             >
               Get Started →
             </Button>

@@ -236,6 +236,7 @@ const Wizard = () => {
                     variant="default"
                     size="large"
                     disabled={!isEnabled || isSubmitting}
+                    style={{ backgroundColor: 'var(--ndaify-accents-success)', color: 'var(--ndaify-button-fg)' }}
                   >
                     Save
                   </Button>
