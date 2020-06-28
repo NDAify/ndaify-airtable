@@ -12,7 +12,9 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "statuses": "^2.0.0",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "react-intl": "^4.5.1",
+    "@reach/menu-button": "^0.10.1"
   },
   "devDependencies": {
     "@airtable/blocks-cli": "0.0.51",

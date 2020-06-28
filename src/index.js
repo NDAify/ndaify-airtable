@@ -10,6 +10,8 @@ import {
 
 import { viewport } from '@airtable/blocks';
 
+import { IntlProvider } from 'react-intl';
+
 import useStateRouter, { ROUTER_LOADING, ROUTER_ERROR, StateRouterProvider } from './lib/useStateRouter';
 
 // screens
@@ -137,6 +139,10 @@ loadCSSFromString(`
     font-weight: 200;
     height: 100%;
   }
+
+  a {
+    text-decoration: none;
+  }
 `);
 
 viewport.addMaxFullscreenSize({
@@ -201,12 +207,21 @@ const NDAifyBlock = () => {
 
   const ndaifyApiKey = globalConfig.get('NDAIFY_API_KEY');
 
+  const ssrNow = Date.now();
+  const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
+
   return (
     <StateRouterProvider
       routes={ROUTES}
       initialRoute={(ndaifyApiKey ? 'home' : 'greeting')}
     >
-      <NDAifyApp />
+      <IntlProvider
+        locale="en"
+        timeZone={timeZone}
+        initialNow={ssrNow}
+      >
+        <NDAifyApp />
+      </IntlProvider>
     </StateRouterProvider>
   );
 };

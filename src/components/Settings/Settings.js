@@ -50,10 +50,6 @@ const InputContainer = styled.div`
   margin-bottom: 2pc;
 `;
 
-// const getFullNameFromUser = (user) =>
-// `${user.metadata.linkedInProfile.firstName}
-// ${user.metadata.linkedInProfile.lastName}`;
-
 const Settings = ({ /* user, */activeNDAifyApiKey }) => {
   const [, setBlockState] = useStateRouter();
 
