@@ -1,9 +1,10 @@
 import React, { useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Formik, Form, Field as FormikField } from 'formik';
+import { queryCaches } from 'react-query';
 
+import * as Airtable from '@airtable/blocks/ui';
 import {
-  Box,
   useViewport,
   useGlobalConfig,
   Button,
@@ -16,8 +17,8 @@ import Input from '../Input/Input';
 
 import useStateRouter from '../../lib/useStateRouter';
 
-import { timeout } from '../../util';
-import NdaifyService from '../../services/NDAifyService';
+import { timeout, scrollToTop } from '../../util';
+import NdaifyService from '../../services/NdaifyService';
 
 const NDAifyHeading = styled.div`
   margin: 0; 
@@ -50,6 +51,32 @@ const InputContainer = styled.div`
   margin-bottom: 2pc;
 `;
 
+const FieldLabel = styled.div`
+  width: 100%;
+  padding-bottom: 8px;
+
+  font-size: 16px;
+  color: var(--ndaify-accents-6);
+  font-weight: 200;
+
+  @media screen and (min-width: 992px) {
+    font-size: 20px;
+  }
+`;
+
+const FieldDesc = styled.div`
+  width: 100%;
+  padding-top: 1pc;
+
+  font-size: 16px;
+  color: var(--ndaify-accents-9);
+  font-weight: 200;
+
+  @media screen and (min-width: 992px) {
+    font-size: 20px;
+  }
+`;
+
 const Settings = ({ /* user, */activeNDAifyApiKey }) => {
   const [, setBlockState] = useStateRouter();
 
@@ -61,6 +88,21 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
   useEffect(() => {
     viewport.enterFullscreenIfPossible();
   }, [viewport]);
+
+  const handleCancelClick = async () => {
+    viewport.exitFullscreen();
+
+    // When the block exits full screen, the scroll position doesn't readjust
+    // this workaround fixes it
+    // FIXME we need a better solution for this
+    await timeout(250);
+    scrollToTop();
+
+    setBlockState({
+      route: 'home',
+    });
+  };
+  const onCancelClick = useCallback(handleCancelClick, []);
 
   const handleFormValidate = (values) => {
     const errors = {};
@@ -83,6 +125,11 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
     // clear all error messages before retrying
     setStatus();
 
+    if (apiKey === activeNDAifyApiKey) {
+      handleCancelClick();
+      return;
+    }
+
     const ndaifyService = new NdaifyService();
 
     try {
@@ -90,10 +137,9 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
 
       await ndaifyService.tryGetSession();
 
-      setBlockState({
-        route: 'loading',
-      });
-      await timeout(800);
+      // clear the caches so we don't show stale data for a different key
+      queryCaches.forEach((cache) => cache.clear());
+
       viewport.exitFullscreen();
       setBlockState({
         route: 'home',
@@ -109,14 +155,6 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
   };
   const onSubmit = useCallback(handleSubmit, [globalConfig, setBlockState, viewport]);
 
-  const handleCancelClick = async () => {
-    viewport.exitFullscreen();
-    setBlockState({
-      route: 'home',
-    });
-  };
-  const onCancelClick = useCallback(handleCancelClick, []);
-
   const initialValues = {
     apiKey: activeNDAifyApiKey,
   };
@@ -124,7 +162,7 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
   return (
     <>
       <SettingsButton show={false} />
-      <Box height="calc(100vh - 80px)" overflow="scroll" display="flex" flexDirection="column" marginBottom="80px">
+      <Airtable.Box height="calc(100vh - 80px)" overflow="scroll" display="flex" flexDirection="column" marginBottom="80px">
         <Formik
           initialValues={initialValues}
           validateOnChange={false}
@@ -135,13 +173,13 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
           {({ isSubmitting, status }) => (
             <Form style={{ height: '100%', marginBottom: '1pc' }}>
 
-              <Box display="flex" height="100%" width="100%" flexDirection="column">
-                <Box display="flex" flexDirection="column" flex="1">
-                  <Box padding="2pc 2pc 4pc 2pc" margin="0">
+              <Airtable.Box display="flex" height="100%" width="100%" flexDirection="column">
+                <Airtable.Box display="flex" flexDirection="column" flex="1">
+                  <Airtable.Box padding="2pc 2pc 4pc 2pc" margin="0">
                     <NDAifyHeading style={{ paddingBottom: '8px' }}>
                       Settings
                     </NDAifyHeading>
-                    <Paragraph style={{ paddingBottom: '2pc' }}>
+                    <Paragraph style={{ paddingBottom: '1pc' }}>
                       This block uses the
                       {' '}
                       <a href="https://ndaify.com/dev/docs" target="_blank" rel="noopener noreferrer">
@@ -150,8 +188,8 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
                       .
                     </Paragraph>
 
-                    <Box display="flex" flexDirection="row">
-                      <Box display="flex" flexDirection="column" width="100%">
+                    <Airtable.Box display="flex" flexDirection="row">
+                      <Airtable.Box display="flex" flexDirection="column" width="100%">
                         {
                           status ? (
                             <ErrorMessage style={{ marginTop: '2pc', marginBottom: '0pc' }}>
@@ -161,6 +199,9 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
                         }
 
                         <InputContainer>
+                          <FieldLabel>
+                            Paste your NDAify API key below:
+                          </FieldLabel>
                           <FormikField
                             as={Input}
                             name="apiKey"
@@ -172,15 +213,18 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
                             autoCorrect="off"
                           />
                           <FieldErrorMessage style={{ marginTop: '1pc' }} name="apiKey" component="div" />
+                          <FieldDesc>
+                            Note: the API credentials will be visible to all collaborators.
+                          </FieldDesc>
                         </InputContainer>
 
-                      </Box>
-                    </Box>
+                      </Airtable.Box>
+                    </Airtable.Box>
 
-                  </Box>
-                </Box>
+                  </Airtable.Box>
+                </Airtable.Box>
 
-                <Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="space-between" alignItems="center" height="80px" borderTop="thick">
+                <Airtable.Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="space-between" alignItems="center" height="80px" borderTop="thick">
                   <Button
                     type="button"
                     variant="default"
@@ -200,14 +244,14 @@ const Settings = ({ /* user, */activeNDAifyApiKey }) => {
                   >
                     Save
                   </Button>
-                </Box>
-              </Box>
+                </Airtable.Box>
+              </Airtable.Box>
 
             </Form>
           )}
         </Formik>
 
-      </Box>
+      </Airtable.Box>
     </>
   );
 };

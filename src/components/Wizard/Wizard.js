@@ -1,12 +1,12 @@
 import React, { useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Formik, Form, Field as FormikField } from 'formik';
+import { queryCaches } from 'react-query';
 
+import * as Airtable from '@airtable/blocks/ui';
 import {
-  Box,
   useViewport,
   useGlobalConfig,
-  Button,
 } from '@airtable/blocks/ui';
 
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
@@ -17,8 +17,7 @@ import Input from '../Input/Input';
 
 import useStateRouter from '../../lib/useStateRouter';
 
-import { timeout } from '../../util';
-import NdaifyService from '../../services/NDAifyService';
+import NdaifyService from '../../services/NdaifyService';
 
 const NDAifyHeading = styled.div`
   margin: 0; 
@@ -79,6 +78,32 @@ const InputContainer = styled.div`
   margin-bottom: 2pc;
 `;
 
+const FieldLabel = styled.div`
+  width: 100%;
+  padding-bottom: 8px;
+
+  font-size: 16px;
+  color: var(--ndaify-accents-6);
+  font-weight: 200;
+
+  @media screen and (min-width: 992px) {
+    font-size: 20px;
+  }
+`;
+
+const FieldDesc = styled.div`
+  width: 100%;
+  padding-top: 1pc;
+
+  font-size: 16px;
+  color: var(--ndaify-accents-9);
+  font-weight: 200;
+
+  @media screen and (min-width: 992px) {
+    font-size: 20px;
+  }
+`;
+
 const Wizard = () => {
   const [, setBlockState] = useStateRouter();
 
@@ -119,10 +144,9 @@ const Wizard = () => {
 
       await ndaifyService.tryGetSession();
 
-      setBlockState({
-        route: 'loading',
-      });
-      await timeout(800);
+      // clear the caches so we don't show stale data for a different key
+      queryCaches.forEach((cache) => cache.clear());
+
       viewport.exitFullscreen();
       setBlockState({
         route: 'home',
@@ -144,7 +168,7 @@ const Wizard = () => {
   return (
     <>
       <SettingsButton show={false} />
-      <Box height="calc(100vh - 80px)" overflow="scroll" display="flex" flexDirection="column" marginBottom="80px">
+      <Airtable.Box height="calc(100vh - 80px)" overflow="scroll" display="flex" flexDirection="column" marginBottom="80px">
         <Formik
           initialValues={initialValues}
           validateOnChange={false}
@@ -155,9 +179,9 @@ const Wizard = () => {
           {({ isSubmitting, status }) => (
             <Form style={{ height: '100%', marginBottom: '1pc' }}>
 
-              <Box display="flex" height="100%" width="100%" flexDirection="column">
-                <Box display="flex" flexDirection="column" flex="1">
-                  <Box padding="2pc 2pc 4pc 2pc" margin="0">
+              <Airtable.Box display="flex" height="100%" width="100%" flexDirection="column">
+                <Airtable.Box display="flex" flexDirection="column" flex="1">
+                  <Airtable.Box padding="2pc 2pc 4pc 2pc" margin="0">
                     <NDAifyHeading style={{ paddingBottom: '8px' }}>
                       Set up your NDAify account
                     </NDAifyHeading>
@@ -165,13 +189,13 @@ const Wizard = () => {
                       To use this block, you need to sign up for NDAify.
                     </Paragraph>
 
-                    <Box display="flex" flexDirection="row" paddingBottom="2pc">
-                      <Box display="flex" flexDirection="row">
+                    <Airtable.Box display="flex" flexDirection="row" paddingBottom="2pc">
+                      <Airtable.Box display="flex" flexDirection="row">
                         <WizardStepNum>
                           1
                         </WizardStepNum>
-                      </Box>
-                      <Box display="flex" flexDirection="column">
+                      </Airtable.Box>
+                      <Airtable.Box display="flex" flexDirection="column">
                         <StepTitle>
                           Sign up or log in to NDAify
                         </StepTitle>
@@ -180,16 +204,16 @@ const Wizard = () => {
                           {' '}
                           for a NDAify account or log in to your existing account.
                         </StepDesc>
-                      </Box>
-                    </Box>
+                      </Airtable.Box>
+                    </Airtable.Box>
 
-                    <Box display="flex" flexDirection="row">
-                      <Box display="flex" flexDirection="row">
+                    <Airtable.Box display="flex" flexDirection="row">
+                      <Airtable.Box display="flex" flexDirection="row">
                         <WizardStepNum>
                           2
                         </WizardStepNum>
-                      </Box>
-                      <Box display="flex" flexDirection="column" width="100%">
+                      </Airtable.Box>
+                      <Airtable.Box display="flex" flexDirection="column" width="100%">
                         <StepTitle>
                           Save your NDAify API credentials
                         </StepTitle>
@@ -210,6 +234,9 @@ const Wizard = () => {
                         }
 
                         <InputContainer>
+                          <FieldLabel>
+                            Paste your NDAify API key below:
+                          </FieldLabel>
                           <FormikField
                             as={Input}
                             name="apiKey"
@@ -221,17 +248,20 @@ const Wizard = () => {
                             autoCorrect="off"
                           />
                           <FieldErrorMessage style={{ marginTop: '1pc' }} name="apiKey" component="div" />
+                          <FieldDesc>
+                            Note: the API credentials will be visible to all collaborators.
+                          </FieldDesc>
                         </InputContainer>
 
-                      </Box>
-                    </Box>
+                      </Airtable.Box>
+                    </Airtable.Box>
 
-                  </Box>
-                </Box>
+                  </Airtable.Box>
+                </Airtable.Box>
 
-                <Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
+                <Airtable.Box backgroundColor="rgb(var(--ndaify-bg))" position="fixed" bottom="0" left="0" width="100%" padding="0 2pc" display="flex" justifyContent="flex-end" alignItems="center" height="80px" borderTop="thick">
                   <Pager numPages={2} activeIndex={1} />
-                  <Button
+                  <Airtable.Button
                     type="submit"
                     variant="default"
                     size="large"
@@ -239,15 +269,15 @@ const Wizard = () => {
                     style={{ backgroundColor: 'var(--ndaify-accents-success)', color: 'var(--ndaify-button-fg)' }}
                   >
                     Save
-                  </Button>
-                </Box>
-              </Box>
+                  </Airtable.Button>
+                </Airtable.Box>
+              </Airtable.Box>
 
             </Form>
           )}
         </Formik>
 
-      </Box>
+      </Airtable.Box>
     </>
   );
 };

@@ -2,18 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 import { FormattedDate } from 'react-intl';
 
+import * as Airtable from '@airtable/blocks/ui';
 import {
-  Box,
   useViewport,
   useBase,
   useWatchable,
   useRecords,
   useLoadable,
 } from '@airtable/blocks/ui';
+
 import { cursor } from '@airtable/blocks';
 import { FieldType, ViewType } from '@airtable/blocks/models';
 
 import SettingsButton from '../SettingsButton/SettingButton';
+import Avatar from '../Avatar/Avatar';
+import UserActionsDropdown from '../UserActionsDropdown/UserActionsDropdown';
 
 import ButtonAnchor from '../Clickable/ButtonAnchor';
 import NdaActionsDropdown from './NdaActionsDropdown';
@@ -58,7 +61,7 @@ const Container = styled.div`
 `;
 
 const PageContainer = styled.div`
-  padding: 1pc;
+  padding: 0;
   padding-top: 0;
   display: flex;
   justify-content: center;
@@ -79,8 +82,11 @@ const DashboardActionRow = styled.div`
   margin-bottom: 1pc;
 `;
 
-const LinksContainer = styled.div`
+const LinksContainer = styled.div``;
 
+const DropdownContainer = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const StyledLink = styled.a`
@@ -119,7 +125,7 @@ const ItemCardContainer = styled.div`
 const HistoryItemContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
-  padding: 1pc 2pc 1pc 2pc;
+  padding: 1pc;
 `;
 
 const HistoryTimeRow = styled.div`
@@ -292,7 +298,9 @@ const HistoryItem = ({ dashboardType, nda }) => (
 );
 
 const DashboardView = ({ user, ndas, activeTable }) => {
-  const isGridView = activeTable.getViewById(cursor.activeViewId).type === ViewType.GRID;
+  const isGridView = cursor.activeViewId && activeTable.getViewById(
+    cursor.activeViewId,
+  ).type === ViewType.GRID;
 
   const emailFields = activeTable.fields.filter(
     (field) => field.type === FieldType.EMAIL,
@@ -322,15 +330,29 @@ const DashboardView = ({ user, ndas, activeTable }) => {
           <LinksContainer>
             <StyledLink active>Sent</StyledLink>
           </LinksContainer>
-          <a href="https://ndaify.com" target="_blank" rel="noreferrer noopener">
-            <ButtonAnchor outline>New</ButtonAnchor>
-          </a>
+
+          <DropdownContainer>
+            <a href="https://ndaify.com/dashboard/incoming" target="_blank" rel="noreferrer noopener">
+              <ButtonAnchor
+                outline
+                style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+              >
+                <Avatar user={user} />
+
+                <span>
+                  Inbox
+                </span>
+              </ButtonAnchor>
+            </a>
+
+            <UserActionsDropdown user={user} />
+          </DropdownContainer>
         </DashboardActionRow>
 
         {
-          selectedEmails.length > 0 ? (
+          (selectedEmails.length > 0 && filteredNdas.length > 0) ? (
             <FilterDesc>
-              NDAs sent to
+              Showing NDAs for
               {' '}
               {selectedEmails.map((email, ii) => (
                 // eslint-disable-next-line react/no-array-index-key
@@ -343,6 +365,29 @@ const DashboardView = ({ user, ndas, activeTable }) => {
         }
 
         {
+          (selectedEmails.length > 0 && filteredNdas.length === 0) ? (
+            <FilterDesc>
+              No NDAs found for
+              {' '}
+              {selectedEmails.map((email, ii) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <FilterItem key={`${email}-${ii}`}>
+                  {`${email}`}
+                </FilterItem>
+              ))}
+            </FilterDesc>
+          ) : null
+        }
+
+        {
+          (selectedEmails.length === 0 && filteredNdas.length === 0) ? (
+            <EmptyHistoryList>
+              You have not sent NDAs
+            </EmptyHistoryList>
+          ) : null
+        }
+
+        {
           filteredNdas.length > 0 ? (
             <HistoryList>
               {
@@ -351,11 +396,7 @@ const DashboardView = ({ user, ndas, activeTable }) => {
                 ))
               }
             </HistoryList>
-          ) : (
-            <EmptyHistoryList>
-              You have not sent NDAs
-            </EmptyHistoryList>
-          )
+          ) : null
         }
 
       </PageContainer>
@@ -382,29 +423,29 @@ const Home = ({ user, ndas }) => {
     <>
       <SettingsButton show />
 
-      {/* <Dialog onClose={() => {}} maxWidth={400}>
-        <Dialog.CloseButton />
-        <Heading size="small">Can&apos;t preview URL</Heading>
-        <Text variant="paragraph" marginBottom={0}>
-          {activeTable.name} : {activeView.name}
-        </Text>
-      </Dialog> */}
+      {/* <Airtable.Dialog onClose={() => {}} maxWidth={400}>
+        <Airtable.Dialog.CloseButton />
+        <Airtable.Heading size="small">Can&apos;t preview URL</Airtable.Heading>
+        <Airtable.Text variant="paragraph" marginBottom={0}>
+          {activeTable.name}
+        </Airtable.Text>
+      </Airtable.Dialog> */}
 
-      <Box
+      <Airtable.Box
         position={viewport.isFullscreen ? 'absolute' : 'unset'}
         top={0}
         left={0}
         right={0}
         bottom={0}
       >
-        <Box display="flex" height="100vh" flexDirection="column">
-          <Box display="flex" flexDirection="column" flex="1">
-            <Box padding="1pc" margin="0">
+        <Airtable.Box display="flex" height="100vh" flexDirection="column">
+          <Airtable.Box display="flex" flexDirection="column" flex="1">
+            <Airtable.Box padding="1pc" margin="0">
               <DashboardView user={user} ndas={ndas} activeTable={activeTable} />
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+            </Airtable.Box>
+          </Airtable.Box>
+        </Airtable.Box>
+      </Airtable.Box>
     </>
   );
 };

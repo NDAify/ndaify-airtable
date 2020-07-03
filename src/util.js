@@ -12,3 +12,8 @@ export const toQueryString = (params) => Object.keys(params)
   .join('&');
 
 export const timeout = (t) => new Promise((resolve) => setTimeout(() => resolve(), t));
+
+export const scrollToTop = () => {
+  window.scrollTo(0, 0);
+  document.body.focus();
+};

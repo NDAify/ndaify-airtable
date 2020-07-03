@@ -1,11 +1,13 @@
 /* eslint-disable max-classes-per-file */
 
 import statuses from 'statuses';
+import { queryCache, queryCaches } from 'react-query';
 
 import { globalConfig } from '@airtable/blocks';
 
 import { replace } from '../lib/useStateRouter';
 import { toQueryString, BaseError } from '../util';
+import getTemplateIdParts from '../utils/getTemplateIdParts';
 
 export class NdaifyServiceError extends BaseError {
   constructor(message = 'NDAify Endpoint Error', statusCode, data) {
@@ -55,6 +57,8 @@ const DISPATCH_METHOD = {
   XHR_PUT: 'XHR_PUT',
   DELETE: 'DELETE',
 };
+
+const AUTHENTICATION_SCHEME = 'ApiKey';
 
 const redirect = (to) => {
   replace(to);
@@ -116,10 +120,13 @@ const dispatch = (
         endpoint,
         {
           ...config.headers,
-          Authorization: sessionToken !== NO_SESSION ? `ApiKey ${sessionToken}` : '',
+          Authorization: sessionToken !== NO_SESSION ? `${AUTHENTICATION_SCHEME} ${sessionToken}` : '',
           'Content-Type': 'application/json',
         },
         payload,
+        {
+          signal: config.abortController?.signal,
+        },
       );
     }
 
@@ -128,10 +135,13 @@ const dispatch = (
         endpoint,
         {
           ...config.headers,
-          Authorization: sessionToken !== NO_SESSION ? `ApiKey ${sessionToken}` : '',
+          Authorization: sessionToken !== NO_SESSION ? `${AUTHENTICATION_SCHEME} ${sessionToken}` : '',
           'Content-Type': 'application/json',
         },
         payload,
+        {
+          signal: config.abortController?.signal,
+        },
       );
     }
 
@@ -140,10 +150,13 @@ const dispatch = (
         endpoint,
         {
           ...config.headers,
-          Authorization: sessionToken !== NO_SESSION ? `ApiKey ${sessionToken}` : '',
+          Authorization: sessionToken !== NO_SESSION ? `${AUTHENTICATION_SCHEME} ${sessionToken}` : '',
           'Content-Type': 'application/json',
         },
         payload,
+        {
+          signal: config.abortController?.signal,
+        },
       );
     }
   } catch (error) {
@@ -190,92 +203,124 @@ const dispatch = (
   return data;
 };
 
-export default class NdaifyService {
-  constructor({ ctx, headers } = {}) {
+class AirtablePlatformService {
+  constructor({
+    ctx,
+    headers,
+    abortController,
+  } = {}) {
     this.ctx = ctx;
     this.headers = headers;
+    this.abortController = abortController;
   }
 
-  getSession() {
+  // eslint-disable-next-line class-methods-use-this
+  getSessionToken() {
     const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.GET, 'sessions', { headers: this.headers })(this.ctx, sessionToken)();
+    return sessionToken;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async endSession() {
+    queryCaches.forEach((cache) => cache.clear());
+  }
+}
+
+export default class NdaifyService extends AirtablePlatformService {
+  static withCache = (queryKey, hit, miss) => {
+    const data = queryCache.getQueryData(queryKey);
+
+    if (data) {
+      return hit(queryKey, data);
+    }
+
+    return miss(queryKey);
+  };
+
+  getSession() {
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.GET, 'sessions', { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   tryGetSession() {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.GET, 'sessions', { headers: this.headers, noRedirect: true })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.GET, 'sessions', { abortController: this.abortController, headers: this.headers, noRedirect: true })(this.ctx, sessionToken)();
   }
 
   createNda(nda) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.POST, 'ndas', { headers: this.headers })(this.ctx, sessionToken)(nda);
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.POST, 'ndas', { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)(nda);
   }
 
   getNda(ndaId) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.GET, `ndas/${ndaId}`, { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.GET, `ndas/${ndaId}`, { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   getNdaPreview(ndaId) {
-    return dispatch(DISPATCH_METHOD.GET, `ndas/${ndaId}/preview`, { headers: this.headers })(this.ctx, NO_SESSION)();
+    return dispatch(DISPATCH_METHOD.GET, `ndas/${ndaId}/preview`, { abortController: this.abortController, headers: this.headers })(this.ctx, NO_SESSION)();
   }
 
   getNdas() {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.GET, 'ndas', { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.GET, 'ndas', { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   acceptNda(ndaId) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/accept`, { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/accept`, { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   revokeNda(ndaId) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/revoke`, { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/revoke`, { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   declineNda(ndaId) {
-    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/decline`, { headers: this.headers })(this.ctx, NO_SESSION)();
+    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/decline`, { abortController: this.abortController, headers: this.headers })(this.ctx, NO_SESSION)();
   }
 
   resendNda(ndaId) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/resend`, { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.POST, `ndas/${ndaId}/resend`, { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   createPaymentIntent(amount, currency) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.POST, 'payment-intents', { headers: this.headers })(this.ctx, sessionToken)({
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.POST, 'payment-intents', { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)({
       amount,
       currency,
     });
   }
 
   getNdaStatistics() {
-    return dispatch(DISPATCH_METHOD.GET, 'nda-statistics', { headers: this.headers })(this.ctx, NO_SESSION)();
+    return dispatch(DISPATCH_METHOD.GET, 'nda-statistics', { abortController: this.abortController, headers: this.headers })(this.ctx, NO_SESSION)();
   }
 
-  getNdaTemplate(owner, repo, ref, path) {
-    return dispatch(DISPATCH_METHOD.GET, `nda-templates/${owner}/${repo}/${ref}/${path}`, { headers: this.headers })(this.ctx, NO_SESSION)();
+  getNdaTemplate(ndaTemplateId) {
+    const {
+      owner, repo, ref, path,
+    } = getTemplateIdParts(ndaTemplateId);
+
+    return dispatch(DISPATCH_METHOD.GET, `nda-templates/${owner}/${repo}/${ref}/${path}`, { abortController: this.abortController, headers: this.headers })(this.ctx, NO_SESSION)();
   }
 
   getOpenApiSpec() {
-    return dispatch(DISPATCH_METHOD.GET, 'static/openapi.json', { headers: this.headers })(this.ctx, NO_SESSION)();
+    return dispatch(DISPATCH_METHOD.GET, 'static/openapi.json', { abortController: this.abortController, headers: this.headers })(this.ctx, NO_SESSION)();
   }
 
-  createApiKeys(name) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.POST, 'api-keys', { headers: this.headers })(this.ctx, sessionToken)({ name });
+  createApiKey(name) {
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.POST, 'api-keys', { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)({ name });
   }
 
   getApiKeys() {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.GET, 'api-keys', { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.GET, 'api-keys', { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 
   deleteApiKey(apiKeyId) {
-    const sessionToken = globalConfig.get('NDAIFY_API_KEY');
-    return dispatch(DISPATCH_METHOD.DELETE, `api-keys/${apiKeyId}`, { headers: this.headers })(this.ctx, sessionToken)();
+    const sessionToken = this.getSessionToken();
+    return dispatch(DISPATCH_METHOD.DELETE, `api-keys/${apiKeyId}`, { abortController: this.abortController, headers: this.headers })(this.ctx, sessionToken)();
   }
 }
