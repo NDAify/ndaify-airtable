@@ -7,15 +7,16 @@
   },
   "dependencies": {
     "@airtable/blocks": "0.0.53",
+    "@reach/menu-button": "^0.10.1",
     "eventemitter3": "^4.0.4",
     "formik": "^2.1.4",
     "react": "^16.9.0",
+    "react-alert": "^7.0.1",
     "react-dom": "^16.9.0",
+    "react-intl": "^4.5.1",
     "react-query": "^2.4.13",
     "statuses": "^2.0.0",
-    "styled-components": "^5.1.1",
-    "react-intl": "^4.5.1",
-    "@reach/menu-button": "^0.10.1"
+    "styled-components": "^5.1.1"
   },
   "devDependencies": {
     "@airtable/blocks-cli": "0.0.54",

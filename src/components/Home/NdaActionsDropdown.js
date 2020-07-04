@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
+import { useAlert } from 'react-alert';
+import { queryCache } from 'react-query';
 
 import {
   Menu as ReachMenu,
   MenuList as ReachMenuList,
   MenuButton as ReachMenuButton,
   MenuLink as ReachMenuLink,
+  MenuItem as ReachMenuItem,
 } from '@reach/menu-button';
+
+import NdaifyService from '../../services/NdaifyService';
 
 const More = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -122,6 +127,12 @@ const MoreOptionsMenuList = styled(ReachMenuList)`
   }
 `;
 
+const MenuItemDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #FAFAFA;
+`;
+
 const MenuLink = React.forwardRef(({
   children, href, ...props
 }, ref) => (
@@ -137,24 +148,99 @@ const MenuLink = React.forwardRef(({
   </a>
 ));
 
-const NdaActionsDropdown = ({ nda }) => (
-  <ReachMenu>
-    {(/* { isExpanded } */) => (
-      <>
-        <MoreOptionsButton id="api-key-more-options">
-          <MoreIcon aria-hidden />
-        </MoreOptionsButton>
-        <MoreOptionsMenuList>
-          <ReachMenuLink as={MenuLink} href={`https://ndaify.com/nda/${nda.ndaId}`} target="_blank">
-            <FormattedMessage
-              id="nda-actions-dropdown-view-nda"
-              defaultMessage="View"
-            />
-          </ReachMenuLink>
-        </MoreOptionsMenuList>
-      </>
-    )}
-  </ReachMenu>
-);
+const NdaActionsDropdown = ({ nda }) => {
+  const toast = useAlert();
+
+  const [isResending, setResending] = useState(false);
+
+  const [isRevoking, setRevoking] = useState(false);
+
+  const handleResendNda = async () => {
+    if (isResending) {
+      return;
+    }
+
+    setResending(true);
+
+    try {
+      const ndaifyService = new NdaifyService();
+      await ndaifyService.resendNda(nda.ndaId);
+
+      await queryCache.invalidateQueries(['nda', nda.ndaId]);
+
+      toast.show('Successfully resent NDA');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      toast.show('Failed to resend NDA');
+    } finally {
+      setResending(false);
+    }
+  };
+  const onResendNda = useCallback(handleResendNda, [nda.ndaId, toast, isResending]);
+
+  const handleRevokeNda = async () => {
+    if (isRevoking) {
+      return;
+    }
+
+    setRevoking(true);
+
+    try {
+      const ndaifyService = new NdaifyService();
+      await ndaifyService.revokeNda(nda.ndaId);
+
+      await queryCache.invalidateQueries(['nda', nda.ndaId]);
+
+      toast.show('Successfully revoked NDA');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      toast.show('Failed to revoke NDA');
+    } finally {
+      setRevoking(false);
+    }
+  };
+  const onRevokeNda = useCallback(handleRevokeNda, [nda.ndaId, toast, isRevoking]);
+
+  return (
+    <ReachMenu>
+      {(/* { isExpanded } */) => (
+        <>
+          <MoreOptionsButton id="api-key-more-options">
+            <MoreIcon aria-hidden />
+          </MoreOptionsButton>
+          <MoreOptionsMenuList>
+            <ReachMenuLink as={MenuLink} href={`https://ndaify.com/nda/${nda.ndaId}`} target="_blank">
+              <FormattedMessage
+                id="nda-actions-dropdown-view-nda"
+                defaultMessage="View"
+              />
+            </ReachMenuLink>
+            {
+              nda.metadata.status === 'pending' ? (
+                <>
+                  <MenuItemDivider />
+                  <ReachMenuItem onSelect={onResendNda}>
+                    <FormattedMessage
+                      id="nda-actions-dropdown-resend-nda"
+                      defaultMessage="Resend"
+                    />
+                  </ReachMenuItem>
+                  <ReachMenuItem onSelect={onRevokeNda}>
+                    <FormattedMessage
+                      id="nda-actions-dropdown-revoke-nda"
+                      defaultMessage="Revoke"
+                    />
+                  </ReachMenuItem>
+                </>
+              ) : null
+            }
+          </MoreOptionsMenuList>
+        </>
+      )}
+    </ReachMenu>
+  );
+};
 
 export default NdaActionsDropdown;

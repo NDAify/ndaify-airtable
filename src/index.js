@@ -1,4 +1,6 @@
 import React from 'react';
+import { positions, Provider as AlertProvider } from 'react-alert';
+
 import {
   initializeBlock,
   Box,
@@ -13,6 +15,8 @@ import { viewport } from '@airtable/blocks';
 import { IntlProvider } from 'react-intl';
 
 import useStateRouter, { ROUTER_LOADING, ROUTER_ERROR, StateRouterProvider } from './lib/useStateRouter';
+
+import Alert from './components/Alert/Alert';
 
 // screens
 import Home from './screens/home';
@@ -225,7 +229,13 @@ const NDAifyBlock = () => {
         timeZone={timeZone}
         initialNow={ssrNow}
       >
-        <NDAifyApp />
+        <AlertProvider
+          template={Alert}
+          timeout={5000}
+          position={positions.TOP_CENTER}
+        >
+          <NDAifyApp />
+        </AlertProvider>
       </IntlProvider>
     </StateRouterProvider>
   );
