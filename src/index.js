@@ -108,6 +108,11 @@ const darkVars = `
 loadCSSFromURLAsync('https://fonts.googleapis.com/css2?family=Raleway:wght@200;400;700&display=swap');
 loadCSSFromString(`
   :root {
+    --reach-menu-button: 1;
+    --reach-dialog: 1;
+  }
+
+  :root {
     ${lightVars}
   }
 

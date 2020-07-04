@@ -332,18 +332,19 @@ const DashboardView = ({ user, ndas, activeTable }) => {
           </LinksContainer>
 
           <DropdownContainer>
-            <a href="https://ndaify.com/dashboard/incoming" target="_blank" rel="noreferrer noopener">
-              <ButtonAnchor
-                outline
-                style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-              >
-                <Avatar user={user} />
+            <ButtonAnchor
+              href="https://ndaify.com/dashboard/incoming"
+              target="_blank"
+              rel="noreferrer noopener"
+              outline
+              style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            >
+              <Avatar user={user} />
 
-                <span>
-                  Inbox
-                </span>
-              </ButtonAnchor>
-            </a>
+              <span>
+                Inbox
+              </span>
+            </ButtonAnchor>
 
             <UserActionsDropdown user={user} />
           </DropdownContainer>
