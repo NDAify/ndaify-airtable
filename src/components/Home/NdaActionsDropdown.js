@@ -166,7 +166,7 @@ const NdaActionsDropdown = ({ nda }) => {
       const ndaifyService = new NdaifyService();
       await ndaifyService.resendNda(nda.ndaId);
 
-      await queryCache.invalidateQueries(['nda', nda.ndaId]);
+      await queryCache.invalidateQueries(['ndas']);
 
       toast.show('Successfully resent NDA');
     } catch (error) {
@@ -190,7 +190,7 @@ const NdaActionsDropdown = ({ nda }) => {
       const ndaifyService = new NdaifyService();
       await ndaifyService.revokeNda(nda.ndaId);
 
-      await queryCache.invalidateQueries(['nda', nda.ndaId]);
+      await queryCache.invalidateQueries(['ndas']);
 
       toast.show('Successfully revoked NDA');
     } catch (error) {
