@@ -55,5 +55,15 @@ jobs:
             ${{ runner.os }}-yarn-
       # Install deps
       - run: npm ci
+      # Set Airtable API Key
+      - run: | 
+          echo '{ "airtableApiKey": "'$AIRTABLE_API_KEY'" }' > .airtableblocksrc.json
+        env:
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
       # run block release
       - run: npm run release
+      # Unset Airtable API Key
+      - run: rm -rf .airtableblocksrc.json
+
+
+      
