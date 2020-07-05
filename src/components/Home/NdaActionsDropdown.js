@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
 import { useAlert } from 'react-alert';
 import { queryCache } from 'react-query';
+import { FadingCircle as Spinner } from 'better-react-spinkit';
 
 import {
   Menu as ReachMenu,
@@ -166,8 +167,6 @@ const NdaActionsDropdown = ({ nda }) => {
       const ndaifyService = new NdaifyService();
       await ndaifyService.resendNda(nda.ndaId);
 
-      await queryCache.invalidateQueries(['ndas']);
-
       toast.show('Successfully resent NDA');
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -207,9 +206,15 @@ const NdaActionsDropdown = ({ nda }) => {
     <ReachMenu>
       {(/* { isExpanded } */) => (
         <>
-          <MoreOptionsButton id="api-key-more-options">
-            <MoreIcon aria-hidden />
-          </MoreOptionsButton>
+          {
+            isResending || isRevoking ? (
+              <Spinner color="var(--ndaify-button-fg)" size={14} />
+            ) : (
+              <MoreOptionsButton id="api-key-more-options">
+                <MoreIcon aria-hidden />
+              </MoreOptionsButton>
+            )
+          }
           <MoreOptionsMenuList>
             <ReachMenuLink as={MenuLink} href={`https://ndaify.com/nda/${nda.ndaId}`} target="_blank">
               <FormattedMessage
