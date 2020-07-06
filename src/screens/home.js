@@ -6,6 +6,7 @@ import HomeImpl from '../components/Home/Home';
 
 import useSessionQuery from '../queries/useSessionQuery';
 import useNdasQuery from '../queries/useNdasQuery';
+import useNdaTemplateOptionsQuery from '../queries/useNdaTemplateOptionsQuery';
 
 const TEN_SECONDS_IN_MILLISECONDS = 10 * 1000;
 
@@ -17,9 +18,16 @@ const Home = (props) => {
     initialData: props.ndas,
     refetchInterval: TEN_SECONDS_IN_MILLISECONDS,
   });
+  const [, ndaTemplateOptions] = useNdaTemplateOptionsQuery({
+    initialData: props.ndaTemplateOptions,
+  });
 
   return (
-    <HomeImpl user={user} ndas={ndas} />
+    <HomeImpl
+      user={user}
+      ndas={ndas}
+      ndaTemplateOptions={ndaTemplateOptions}
+    />
   );
 };
 
@@ -29,6 +37,7 @@ Home.getInitialProps = async () => {
   const [
     { user },
     { ndas },
+    { ndaTemplateOptions },
   ] = await Promise.all([
     NdaifyService.withCache(
       ['session'],
@@ -40,11 +49,17 @@ Home.getInitialProps = async () => {
       (queryKey, data) => ({ ndas: data }),
       () => ndaifyService.getNdas(),
     ),
+    NdaifyService.withCache(
+      ['ndasTemplateOptions'],
+      (queryKey, data) => ({ ndaTemplateOptions: data }),
+      () => ndaifyService.getNdaTemplateOptions(),
+    ),
   ]);
 
   return {
     user,
     ndas,
+    ndaTemplateOptions,
   };
 };
 

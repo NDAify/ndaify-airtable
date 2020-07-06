@@ -21,17 +21,6 @@ import UserActionsDropdown from '../UserActionsDropdown/UserActionsDropdown';
 import ButtonAnchor from '../Clickable/ButtonAnchor';
 import NdaActionsDropdown from './NdaActionsDropdown';
 
-const NDA_TEMPLATE_OPTIONS = [
-  {
-    label: 'Mutual',
-    value: 'ndaify/ndaify-templates/b3ece24fd09f3a5d2efec55642398d17b721f4a9/STANDARD_MUTUAL.md',
-  },
-  {
-    label: 'PANDA',
-    value: 'ndaify/ndaify-templates/b3ece24fd09f3a5d2efec55642398d17b721f4a9/PANDA.md',
-  },
-];
-
 const getFullNameFromUser = (user) => `${user.metadata.linkedInProfile.firstName} ${user.metadata.linkedInProfile.lastName}`;
 const getRecipientEmail = (nda) => (
   nda.recipient
@@ -242,7 +231,7 @@ const FilterItem = styled.span`
   }
 `;
 
-const HistoryItem = ({ dashboardType, nda }) => (
+const HistoryItem = ({ dashboardType, ndaType, nda }) => (
   <HistoryItemWrapper>
     <HistoryItemActions>
       <NdaActionsDropdown nda={nda} />
@@ -280,11 +269,7 @@ const HistoryItem = ({ dashboardType, nda }) => (
           <TypeContainer>
             <HistoryItemTitle>Type</HistoryItemTitle>
             <RecipientInfoText>
-              {
-                NDA_TEMPLATE_OPTIONS.find(
-                  (option) => option.value === nda.metadata.ndaTemplateId,
-                ).label
-              }
+              {ndaType}
             </RecipientInfoText>
           </TypeContainer>
           <StatusContainer>
@@ -297,7 +282,12 @@ const HistoryItem = ({ dashboardType, nda }) => (
   </HistoryItemWrapper>
 );
 
-const DashboardView = ({ user, ndas, activeTable }) => {
+const DashboardView = ({
+  user,
+  ndas,
+  activeTable,
+  ndaTemplateOptions,
+}) => {
   const isGridView = cursor.activeViewId && activeTable.getViewById(
     cursor.activeViewId,
   ).type === ViewType.GRID;
@@ -393,7 +383,16 @@ const DashboardView = ({ user, ndas, activeTable }) => {
             <HistoryList>
               {
                 filteredNdas.map((nda) => (
-                  <HistoryItem key={nda.ndaId} nda={nda} dashboardType={dashboardType} />
+                  <HistoryItem
+                    key={nda.ndaId}
+                    nda={nda}
+                    dashboardType={dashboardType}
+                    ndaType={
+                      ndaTemplateOptions.find(
+                        (option) => option.ndaTemplateId === nda.metadata.ndaTemplateId,
+                      ).label
+                    }
+                  />
                 ))
               }
             </HistoryList>
@@ -405,7 +404,7 @@ const DashboardView = ({ user, ndas, activeTable }) => {
   );
 };
 
-const Home = ({ user, ndas }) => {
+const Home = ({ user, ndas, ndaTemplateOptions }) => {
   const viewport = useViewport();
 
   useLoadable(cursor);
@@ -442,7 +441,12 @@ const Home = ({ user, ndas }) => {
         <Airtable.Box display="flex" height="100vh" flexDirection="column">
           <Airtable.Box display="flex" flexDirection="column" flex="1">
             <Airtable.Box padding="1pc" margin="0">
-              <DashboardView user={user} ndas={ndas} activeTable={activeTable} />
+              <DashboardView
+                user={user}
+                ndas={ndas}
+                activeTable={activeTable}
+                ndaTemplateOptions={ndaTemplateOptions}
+              />
             </Airtable.Box>
           </Airtable.Box>
         </Airtable.Box>
