@@ -180,6 +180,11 @@ const RecipientInfoText = styled.div`
 
 const TypeAndStatusRow = styled.div`
   display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: 576px) {
+    flex-direction: row;
+  }
 `;
 
 const TypeContainer = styled.div`
@@ -390,7 +395,7 @@ const DashboardView = ({
                     ndaType={
                       ndaTemplateOptions.find(
                         (option) => option.ndaTemplateId === nda.metadata.ndaTemplateId,
-                      ).label
+                      ).data.title
                     }
                   />
                 ))
